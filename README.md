@@ -110,7 +110,7 @@ Where depending on the webpage and on the post we can have after url:
 
 and after this a string we specify the "request string" which will contain the
 following elements separated by a colon `:`:
-* page_on_which_the_login_happens
+* pageOnWhichTheLoginHappens
 * list of parameters, here we have to specify with ^USER^ and ^PASS^ where
     usernames and passwords will be inserted
 * a character which may be F (for failing strings) or S for successful strings
@@ -282,3 +282,25 @@ hydra -L <your_username_file> -P <your_password_file> <IP> mysql -o output.txt
  # anyway it is fundamental to specify it if the mysql port is different
 ```
 
+
+## Appendix A: Sending Hydra traffic through Proxy
+
+
+It is often useful to analyze what we are actually doing with hydra, to this
+purpose we can send the traffic to an intercepting proxy such as Burp.
+
+To do this, we just have to set an environment variable:
+```sh
+export HYDRA_PROXY=http://127.0.0.1:8080
+# or
+export HYDRA_PROXY_HTTP=http://127.0.0.1:8080 
+```
+
+From `hydra -v` we can indeed read:
+```sh
+Use HYDRA_PROXY_HTTP or HYDRA_PROXY environment variables for a proxy setup.
+E.g. % export HYDRA_PROXY=socks5://l:p@127.0.0.1:9150 (or: socks4:// connect://)
+     % export HYDRA_PROXY=connect_and_socks_proxylist.txt  (up to 64 entries)
+     % export HYDRA_PROXY_HTTP=http://login:pass@proxy:8080
+     % export HYDRA_PROXY_HTTP=proxylist.txt  (up to 64 entries)
+```
