@@ -224,8 +224,11 @@ hydra -l <username> -P <password_file> telnet://targetname
 ## SSH
 
 ```sh
-hydra -l root -M /path/to/ip/list.txt -P /path/to/passwordlist.txt ssh
+hydra -l root -M /path/to/ip/list.txt -P /path/to/passwordlist.txt ssh -t 4
 ```
+Notice that with some services, we may need to use the recommended
+number of tasks. In case of SSH if we use more than 4 tasks we may get
+errors.
 
 ```sh
 hydra 192.168.1.26 ssh2 -s 22 -P pass.txt -L users.txt -e ns -t 10
