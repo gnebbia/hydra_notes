@@ -250,7 +250,6 @@ hydra -L logins.txt -P pws.txt -M targets.txt ssh
 ```
 
 
-
 ## FTP 
 
 ```sh
